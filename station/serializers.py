@@ -24,6 +24,14 @@ class RouteSerializer(serializers.ModelSerializer):
         fields = ("id", "source", "destination", "distance")
 
 
+class RouteListSerializer(RouteSerializer):
+    source = serializers.CharField(source="source.name", read_only=True)
+    destination = serializers.CharField(
+        source="destination.name",
+        read_only=True,
+    )
+
+
 class TrainTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrainType
@@ -40,6 +48,13 @@ class TrainSerializer(serializers.ModelSerializer):
             "places_in_cargo",
             "train_type",
         )
+
+
+class TrainListSerializer(TrainSerializer):
+    train_type = serializers.CharField(
+        source="train_type.name",
+        read_only=True,
+    )
 
 
 class CrewSerializer(serializers.ModelSerializer):
@@ -61,6 +76,17 @@ class JourneySerializer(serializers.ModelSerializer):
         )
 
 
+class JourneyListSerializer(JourneySerializer):
+    route = RouteListSerializer(read_only=True)
+    train = TrainListSerializer(read_only=True)
+
+
+class JourneyDetailSerializer(JourneySerializer):
+    route = RouteSerializer(read_only=True)
+    train = TrainSerializer(read_only=True)
+    crew = CrewSerializer(many=True, read_only=True)
+
+
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
@@ -73,3 +99,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ("id", "created_at", "tickets")
+
+
+class OrderDetailSerializer(OrderSerializer):
+    tickets = TicketSerializer(many=True, read_only=True)

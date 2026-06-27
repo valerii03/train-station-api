@@ -14,11 +14,16 @@ from station.permissions import IsAdminOrReadOnly
 from station.serializers import (
     StationSerializer,
     RouteSerializer,
+    RouteListSerializer,
     TrainTypeSerializer,
     TrainSerializer,
+    TrainListSerializer,
     CrewSerializer,
     JourneySerializer,
+    JourneyListSerializer,
+    JourneyDetailSerializer,
     OrderSerializer,
+    OrderDetailSerializer,
 )
 
 
@@ -36,6 +41,12 @@ class RouteViewSet(viewsets.ModelViewSet):
     serializer_class = RouteSerializer
     permission_classes = (IsAdminOrReadOnly,)
 
+    def get_serializer_class(self):
+        if self.action == "list":
+            return RouteListSerializer
+
+        return RouteSerializer
+
 
 class TrainTypeViewSet(viewsets.ModelViewSet):
     queryset = TrainType.objects.all()
@@ -49,6 +60,12 @@ class TrainViewSet(viewsets.ModelViewSet):
     )
     serializer_class = TrainSerializer
     permission_classes = (IsAdminOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return TrainListSerializer
+
+        return TrainSerializer
 
 
 class CrewViewSet(viewsets.ModelViewSet):
@@ -69,6 +86,15 @@ class JourneyViewSet(viewsets.ModelViewSet):
     serializer_class = JourneySerializer
     permission_classes = (IsAdminOrReadOnly,)
 
+    def get_serializer_class(self):
+        if self.action == "list":
+            return JourneyListSerializer
+
+        if self.action == "retrieve":
+            return JourneyDetailSerializer
+
+        return JourneySerializer
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
@@ -87,3 +113,9 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return OrderDetailSerializer
+
+        return OrderSerializer
