@@ -1,6 +1,15 @@
 from django.contrib import admin
 
-from station.models import Station, Route, TrainType, Train, Crew, Journey
+from station.models import (
+    Station,
+    Route,
+    TrainType,
+    Train,
+    Crew,
+    Journey,
+    Order,
+    Ticket,
+)
 
 
 @admin.register(Station)
@@ -44,3 +53,13 @@ class JourneyAdmin(admin.ModelAdmin):
         "departure_time",
         "arrival_time",
     )
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ("id", "created_at", "user")
+
+
+@admin.register(Ticket)
+class TicketAdmin(admin.ModelAdmin):
+    list_display = ("id", "journey", "cargo", "seat", "order")
