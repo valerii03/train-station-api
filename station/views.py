@@ -71,13 +71,13 @@ class JourneyViewSet(viewsets.ModelViewSet):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return (
-            Order.objects
-            .filter(user=self.request.user)
+            Order.objects.filter(user=self.request.user)
             .select_related("user")
             .prefetch_related(
                 "tickets",
