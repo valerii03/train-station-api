@@ -90,15 +90,44 @@ class JourneyDetailSerializer(JourneySerializer):
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
-        fields = ("id", "cargo", "seat", "journey")
+        fields = (
+            "id",
+            "cargo",
+            "seat",
+            "journey",
+        )
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    tickets = TicketSerializer(many=True, read_only=True)
+    tickets = TicketSerializer(
+        many=True,
+        allow_empty=False,
+    )
 
     class Meta:
         model = Order
-        fields = ("id", "created_at", "tickets")
+        fields = (
+            "id",
+            "created_at",
+            "tickets",
+        )
+        read_only_fields = (
+            "id",
+            "created_at",
+        )
+
+    def create(self, validated_data):
+        tickets_data = validated_data.pop("tickets")
+
+        order = Order.objects.create(**validated_data)
+
+        for ticket_data in tickets_data:
+            Ticket.objects.create(
+                order=order,
+                **ticket_data
+            )
+
+        return order
 
 
 class OrderDetailSerializer(OrderSerializer):
