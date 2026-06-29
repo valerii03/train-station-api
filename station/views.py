@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated
 
 from station.models import (
@@ -31,6 +32,8 @@ class StationViewSet(viewsets.ModelViewSet):
     queryset = Station.objects.all()
     serializer_class = StationSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
 
 
 class RouteViewSet(viewsets.ModelViewSet):
@@ -40,6 +43,8 @@ class RouteViewSet(viewsets.ModelViewSet):
     )
     serializer_class = RouteSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("source__name", "destination__name")
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -60,6 +65,8 @@ class TrainViewSet(viewsets.ModelViewSet):
     )
     serializer_class = TrainSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name", "train_type__name")
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -72,6 +79,8 @@ class CrewViewSet(viewsets.ModelViewSet):
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("first_name", "last_name")
 
 
 class JourneyViewSet(viewsets.ModelViewSet):
@@ -85,6 +94,12 @@ class JourneyViewSet(viewsets.ModelViewSet):
     )
     serializer_class = JourneySerializer
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = (
+        "route__source__name",
+        "route__destination__name",
+        "train__name",
+    )
 
     def get_serializer_class(self):
         if self.action == "list":
