@@ -31,12 +31,20 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "drf_spectacular",
+    "django_filters",
+
+    "accounts",
+    "station",
 ]
 
 MIDDLEWARE = [
@@ -98,7 +106,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+REST_FRAMEWORK = dict(DEFAULT_SCHEMA_CLASS="drf_spectacular.openapi.AutoSchema", DEFAULT_AUTHENTICATION_CLASSES=(
+    "rest_framework_simplejwt.authentication.JWTAuthentication",
+), DEFAULT_PERMISSION_CLASSES=(
+    "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+), DEFAULT_PAGINATION_CLASS=(
+    "rest_framework.pagination.PageNumberPagination"
+), PAGE_SIZE=10)
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
@@ -110,7 +124,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+AUTH_USER_MODEL = "accounts.User"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
